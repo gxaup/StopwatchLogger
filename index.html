@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supervisor Stopwatch</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SVG Icon Definitions -->
+    <svg style="display: none;">
+      <symbol id="icon-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </symbol>
+      <symbol id="icon-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </symbol>
+      <symbol id="icon-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+      </symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 4v6h-6"></path>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y1="3"></line>
+      </symbol>
+    </svg>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Login View -->
+      <main id="login-view" class="view active">
+        <div class="container container-large card" style="max-width: 450px;">
+          <header class="view-header">
+            <h1 class="glow-text">Stopwatch Report</h1>
+            <p class="subtitle">Enter name below</p>
+          </header>
+          
+          <div class="login-form">
+            <div class="input-group" style="margin-bottom: 2rem;">
+              <label for="username">Name</label>
+              <input type="text" id="username" placeholder="Enter name..." autocomplete="off" />
+            </div>
+            
+            <button id="btn-login-confirm" class="btn-primary">
+              <span>Enter</span>
+              <div class="gloss-sheen"></div>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Dashboard View (After Login) -->
+      <main id="dashboard-view" class="view">
+        <div class="container container-medium">
+          <header class="view-header">
+            <h1 id="welcome-message">Welcome</h1>
+            <p class="subtitle">Stopwatch Reports</p>
+          </header>
+
+          <div class="button-stack">
+            <button id="btn-resume" class="btn-accent hidden">
+              <svg class="icon-sm"><use href="#icon-refresh" /></svg>
+              <span>Resume Active Report</span>
+            </button>
+            <button id="btn-start-new" class="btn-primary">
+              <svg class="icon-sm" style="margin-right: 8px;"><use href="#icon-plus" /></svg>
+              <span>New Stopwatch</span>
+              <div class="gloss-sheen"></div>
+            </button>
+            <button id="btn-view-all" class="btn-secondary">
+              <svg class="icon-sm" style="margin-right: 8px;"><use href="#icon-folder" /></svg>
+              <span>Saved Reports</span>
+            </button>
+            <button id="btn-logout" class="btn-tertiary" style="margin-top: 2rem; opacity: 0.5;">
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- New Stopwatch View -->
+      <main id="new-stopwatch-view" class="view">
+        <div class="container container-medium card">
+          <div class="gloss-sheen"></div>
+          <header class="view-header-row">
+            <button class="icon-btn-sm btn-back" data-target="dashboard">
+              <svg class="icon"><use href="#icon-chevron-left" /></svg>
+            </button>
+            <h2>New session</h2>
+          </header>
+          
+          <div class="form-content">
+            <div class="input-group">
+              <label for="supervisor-name">Supervisor Name:</label>
+              <input type="text" id="supervisor-name" placeholder="" />
+            </div>
+            <div class="input-group">
+              <label for="stop-num">Stop #:</label>
+              <input type="text" id="stop-num" placeholder="" />
+            </div>
+            <div class="input-group">
+              <label for="time-started">Time Started:</label>
+              <input type="text" id="time-started" readonly class="clickable-input" />
+            </div>
+            
+            <button id="btn-confirm-start" class="btn-primary">
+              <span>Start Stopwatch</span>
+              <div class="gloss-sheen"></div>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- Stopwatch Session Details View -->
+      <main id="stopwatch-session-details-view" class="view">
+        <div class="container container-large">
+          <div class="liquid-glass-container" style="margin-top: 1rem;">
+            <div class="section-title-row">
+              <h3 class="section-title">Session Info</h3>
+              <div class="header-tools">
+                <div class="live-indicator-sm">
+                  <span class="dot pulse"></span>
+                  <span>LIVE</span>
+                </div>
+                <button id="btn-edit-session" class="icon-tool-btn" title="Edit Session">
+                  <svg class="icon-xs"><use href="#icon-pencil" /></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="session-summary-bar">
+              <div class="stat-item-compact">
+                <span class="stat-label">STOP:</span>
+                <span id="session-stop-display" class="stat-value">-</span>
+              </div>
+              <div class="stat-item-compact">
+                <span class="stat-label">SUP:</span>
+                <span id="session-supervisor-display" class="stat-value">-</span>
+              </div>
+              <div class="stat-item-compact" style="margin-right: 0;">
+                <span class="stat-label">START:</span>
+                <span id="session-start-time-display" class="stat-value">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="liquid-glass-container">
+            <h3 class="section-title">Log Violation</h3>
+            <div class="violation-grid-compact">
+              <button class="violation-btn-sm" data-type="Phone Usage">Phone Usage</button>
+              <button class="violation-btn-sm" data-type="Bus Dispatch">Bus Dispatch</button>
+              <button class="violation-btn-sm" data-type="Sitting Down">Sitting Down</button>
+              <button class="violation-btn-sm" data-type="Uniform">Uniform</button>
+              <button class="violation-btn-sm custom-btn" id="btn-custom-violation">Custom +</button>
+            </div>
+          </div>
+
+          <div class="liquid-glass-container">
+            <div class="section-title-wrapper">
+              <h3 class="section-title">Violation Log</h3>
+              <span id="violation-count-badge" class="count-badge">0 logged</span>
+            </div>
+            <ul id="violation-log-list" class="log-list">
+              <!-- Logs appended here -->
+            </ul>
+          </div>
+          
+          <div class="action-footer">
+            <button id="btn-finish-session" class="btn-primary full-width">
+              <svg class="icon-sm" style="margin-right: 8px;"><use href="#icon-download" /></svg>
+              <span>End Session & Report</span>
+              <div class="gloss-sheen"></div>
+            </button>
+          </div>
+        </div>
+      </main>
+      
+      <!-- Stopwatches List View -->
+      <main id="stopwatches-view" class="view">
+        <div class="container container-large">
+          <header class="view-header-row">
+            <button class="icon-btn-sm btn-back" data-target="dashboard">
+              <svg class="icon"><use href="#icon-chevron-left" /></svg>
+            </button>
+            <h2>Your Reports</h2>
+          </header>
+          
+          <div class="log-section">
+            <div class="folder-header">
+              <svg class="icon-sm"><use href="#icon-folder" /></svg>
+              <span>Inspection History</span>
+            </div>
+            <ul id="saved-stopwatches-list" class="log-list">
+              <li class="log-item">
+                <span class="type">Supervisor Smith - Stop #101</span>
+                <span class="time">00:15:22</span>
+              </li>
+              <li class="log-item">
+                <span class="type">Supervisor Jones - Stop #205</span>
+                <span class="time">00:08:45</span>
+              </li>
+            </ul>
+          </div>
+          
+          <button id="btn-back-to-login" class="btn-tertiary">Back to Login</button>
+        </div>
+      </main>
+
+      <!-- Custom Violation Modal -->
+      <div id="custom-violation-modal" class="modal-overlay">
+        <div class="modal card">
+          <header class="modal-header">
+            <h3>Custom Violation</h3>
+          </header>
+          <div class="input-group">
+            <label for="custom-violation-input">Violation Description</label>
+            <input type="text" id="custom-violation-input" placeholder="Type here..." />
+          </div>
+          <div class="modal-actions">
+            <button id="btn-cancel-custom" class="btn-secondary">Cancel</button>
+            <button id="btn-save-custom" class="btn-primary" data-shortcut="Enter">Add Violation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Violation Detail Modal (Notes + Time) -->
+      <div id="violation-detail-modal" class="modal-overlay">
+        <div class="modal card">
+          <header class="modal-header">
+            <h3 id="detail-modal-title">Log Violation</h3>
+            <p id="detail-modal-subtitle" class="subtitle">Add notes or adjust time</p>
+          </header>
+          
+          <div class="input-group-row">
+            <div class="input-group">
+              <label for="detail-time-input">Time</label>
+              <input type="text" id="detail-time-input" readonly class="clickable-input" />
+            </div>
+          </div>
+          
+          <div id="bus-dispatch-options" class="input-group-row" style="display: none; gap: 1rem; margin-bottom: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; cursor: pointer;">
+              <input type="checkbox" id="check-late" style="width: 1.2rem; height: 1.2rem;" /> <span>Late</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; cursor: pointer;">
+              <input type="checkbox" id="check-no-input" style="width: 1.2rem; height: 1.2rem;" /> <span>Didn't Input</span>
+            </label>
+          </div>
+          
+          <div class="input-group">
+            <label for="detail-notes-input" id="detail-notes-label">Notes (Optional)</label>
+            <textarea id="detail-notes-input" placeholder="Type here..." rows="2"></textarea>
+          </div>
+          
+          <div class="modal-actions">
+            <button id="btn-cancel-detail" class="btn-secondary">Cancel</button>
+            <button id="btn-save-detail" class="btn-primary">Save Violation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Session Modal -->
+      <div id="edit-session-modal" class="modal-overlay">
+        <div class="modal card">
+          <header class="modal-header">
+            <h3>Edit Session Details</h3>
+          </header>
+          <div class="input-group">
+            <label for="edit-supervisor-input">Supervisor Name:</label>
+            <input type="text" id="edit-supervisor-input" />
+          </div>
+          <div class="input-group">
+            <label for="edit-stop-num-input">Stop #:</label>
+            <input type="text" id="edit-stop-num-input" />
+          </div>
+          <div class="input-group">
+            <label for="edit-start-time-input">Time Started:</label>
+            <input type="text" id="edit-start-time-input" readonly class="clickable-input" />
+          </div>
+          <div class="modal-actions">
+            <button id="btn-cancel-edit-session" class="btn-secondary">Cancel</button>
+            <button id="btn-save-edit-session" class="btn-primary">Update Details</button>
+          </div>
+        </div>
+      </div>
+      <!-- Time Picker Modal (Scroll Menu) -->
+      <div id="time-picker-modal" class="modal-overlay">
+        <div class="modal card time-picker-card">
+          <header class="modal-header">
+            <h3>Select Time</h3>
+            <p class="subtitle">Select the hour, minute, and period</p>
+          </header>
+          
+          <div class="time-picker-body">
+            <div class="time-column" id="picker-hour-col">
+              <!-- JS Generates hours 1-12 -->
+            </div>
+            <div class="time-column" id="picker-minute-col">
+              <!-- JS Generates minutes 00-59 -->
+            </div>
+            <div class="time-column" id="picker-ampm-col">
+              <div class="time-option" data-val="AM">AM</div>
+              <div class="time-option" data-val="PM">PM</div>
+            </div>
+          </div>
+          
+          <div class="modal-actions">
+            <button id="btn-cancel-picker" class="btn-secondary">Cancel</button>
+            <button id="btn-save-picker" class="btn-primary">Set Time</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
