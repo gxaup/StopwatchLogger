@@ -40,8 +40,20 @@ jobs:
             -allowProvisioningUpdates \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Upload xcarchive Artifact
+      - name: Export IPA (Development)
+        run: |
+          mkdir -p build/export
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist ExportOptions.plist \
+            -allowProvisioningUpdates \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: App-xcarchive
-          path: build/App.xcarchive
+          name: Stopwatch-iOS-IPA
+          path: |
+            build/App.xcarchive
+            build/export/*.ipa
