@@ -78,6 +78,7 @@ const parseTimeToMinutes = (timeStr) => {
 };
 
 // Persistence Logic
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 const STORAGE_KEY = 'supervisor_stopwatch_session';
 const USER_KEY = 'supervisor_stopwatch_user';
 const REPORTS_LIST_KEY = 'supervisor_stopwatch_reports_list';
@@ -618,8 +619,26 @@ function generateReportTextFromSession(s) {
   return text;
 }
 
-function downloadReport(content, session) {
+async function downloadReport(content, session) {
   const filename = `Report_${session.supervisor}_Stop${session.stopNum}.txt`;
+  
+  // Native Capacitor support for truly offline IPA storage
+  if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+    try {
+      await Filesystem.writeFile({
+        path: filename,
+        data: content,
+        directory: Directory.Documents,
+        encoding: Encoding.UTF8,
+      });
+      // Optionally show a share dialog or just tell them it's saved
+      return;
+    } catch (e) {
+      console.error('Native save failed', e);
+    }
+  }
+
+  // Browser Fallback (Regular Desktop/Mobile Web)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

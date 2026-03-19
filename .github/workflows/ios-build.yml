@@ -1,0 +1,50 @@
+name: Build iOS IPA (Unsigned)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Web Assets
+        run: npm run build
+
+      - name: Initialize & Sync Capacitor
+        run: |
+          npx cap sync ios
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Build iOS xcarchive
+        run: |
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $PWD/build/App.xcarchive \
+            clean archive \
+            -allowProvisioningUpdates \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload xcarchive Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: App-xcarchive
+          path: build/App.xcarchive

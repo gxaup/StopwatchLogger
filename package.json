@@ -9,9 +9,13 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.2.0",
     "vite": "^8.0.0"
   },
   "dependencies": {
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/ios": "^8.2.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
