@@ -40,20 +40,17 @@ jobs:
             -allowProvisioningUpdates \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Export IPA (Development)
+      - name: Package Unsigned IPA (Sideload Ready)
         run: |
-          mkdir -p build/export
-          xcodebuild -exportArchive \
-            -archivePath build/App.xcarchive \
-            -exportPath build/export \
-            -exportOptionsPlist ExportOptions.plist \
-            -allowProvisioningUpdates \
-            CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/export/Payload
+          APP_PATH=$(find build/App.xcarchive -name "*.app" | head -n 1)
+          cp -r "$APP_PATH" build/export/Payload/
+          cd build/export
+          zip -r Stopwatch.ipa Payload
+          rm -rf Payload
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Stopwatch-iOS-IPA
-          path: |
-            build/App.xcarchive
-            build/export/*.ipa
+          name: Stopwatch-iOS-Unsigned-IPA
+          path: build/export/Stopwatch.ipa
